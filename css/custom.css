@@ -1,0 +1,9 @@
+html {
+    background-color: #ffffff;
+    font-size: 16px;
+}
+
+#map {
+    height: 18.75rem; /* 300px */
+    width: 25rem; /* 400px */
+}
