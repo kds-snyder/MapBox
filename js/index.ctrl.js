@@ -22,6 +22,7 @@ $(document).ready(function () {
                     center: centerFeature.center,
                     zoom: 4
                 });
+                map.addControl(new mapboxgl.NavigationControl());
 
                 mapboxClient.geocoding.forwardGeocode({
                     query: 'San Diego, California',
