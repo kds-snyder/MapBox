@@ -1,45 +1,60 @@
 $(document).ready(function () {
+    // List of Advantage offices
+    var geojson = {
+        type: 'FeatureCollection',
+        features: [
+            {
+                type: 'Feature',
+                geometry: {
+                    coordinates: [-117.8491357, 33.68315],
+                    type: 'Point'                
+                },
+                properties: {
+                    address: '18100 Von Karman Avenue, Suite 1000, Irvine, CA 92612',
+                    code: 'I',
+                    description: 'Irvine Towers',
+                    title: 'Irvine office'
+                }
+            },
+            {
+                type: 'Feature',
+                geometry: {
+                    coordinates: [-117.209298, 32.880391],
+                    type: 'Point'
+                },
+                properties: {
+                    address: '9520 Towne Centre Drive, San Diego 92121',
+                    code: 'SD',
+                    description: 'San Diego office',
+                    title: 'San Diego office'
+                }
+            }
+        ]
+    };
 
     mapboxgl.accessToken = 'pk.eyJ1Ijoia2RzbnlkZXJkZXYiLCJhIjoiY2swNnZ4ODB6MDEyZjNscGFuYXhnbzVrYyJ9.Yy8MxX3sxuGu0NVwxeFEJA';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        boxZoom: true,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [-97.6114, 38.8403], // center on Salinas, Kansas
+        zoom: 4.5
+    });
+    map.addControl(new mapboxgl.NavigationControl());
 
-    var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
-    mapboxClient.geocoding.forwardGeocode({
-        query: 'Salina, Kansas',
-        autocomplete: false,
-        limit: 1
-    })
-        .send()
-        .then(function (response) {
-            if (response && response.body && response.body.features && response.body.features.length) {
-                console.log('geocode response: ');
-                console.log(response);
-                var centerFeature = response.body.features[0];
+    // add markers to map
+    geojson.features.forEach(function (marker) {
 
-                var map = new mapboxgl.Map({
-                    container: 'map',
-                    boxZoom: true,
-                    style: 'mapbox://styles/mapbox/streets-v11',
-                    center: centerFeature.center,
-                    zoom: 4
-                });
+        // create a HTML element for each feature
+        var el = document.createElement('div');
+        el.className = 'marker';
 
-                mapboxClient.geocoding.forwardGeocode({
-                    query: 'San Diego, California',
-                    autocomplete: false,
-                    limit: 1
-                })
-                    .send()
-                    .then(function (response) {
-                        if (response && response.body && response.body.features && response.body.features.length) {
-                            console.log('geocode response: ');
-                            console.log(response);
-                            var sdFeature = response.body.features[0];
+        // make a marker for each feature and add to the map
+        new mapboxgl.Marker(el)
+            .setLngLat(marker.geometry.coordinates)
+            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
+                .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p><p>' + marker.properties.address + '</p>'))
+            .addTo(map);
+    });
 
-                            new mapboxgl.Marker()
-                                .setLngLat(sdFeature.center)
-                                .addTo(map);
-                        }
-                    });
-            }
-        });
 });
