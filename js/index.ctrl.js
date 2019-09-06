@@ -2,44 +2,32 @@ $(document).ready(function () {
 
     mapboxgl.accessToken = 'pk.eyJ1Ijoia2RzbnlkZXJkZXYiLCJhIjoiY2swNnZ4ODB6MDEyZjNscGFuYXhnbzVrYyJ9.Yy8MxX3sxuGu0NVwxeFEJA';
 
-    var mapboxClient = mapboxSdk({ accessToken: mapboxgl.accessToken });
-    mapboxClient.geocoding.forwardGeocode({
-        query: 'Salina, Kansas',
-        autocomplete: false,
-        limit: 1
-    })
-        .send()
-        .then(function (response) {
-            if (response && response.body && response.body.features && response.body.features.length) {
-                console.log('geocode response: ');
-                console.log(response);
-                var centerFeature = response.body.features[0];
+    var map = new mapboxgl.Map({
+        container: 'map',
+        boxZoom: true,
+        style: 'mapbox://styles/kdsnyderdev/ck087tsv706x61cmqu8p4m6r7',
+        center: [-97.6114, 38.8403],
+        zoom: 4.5
+    });
 
-                var map = new mapboxgl.Map({
-                    container: 'map',
-                    boxZoom: true,
-                    style: 'mapbox://styles/mapbox/streets-v11',
-                    center: centerFeature.center,
-                    zoom: 4
-                });
+    map.addControl(new mapboxgl.NavigationControl());
 
-                mapboxClient.geocoding.forwardGeocode({
-                    query: 'San Diego, California',
-                    autocomplete: false,
-                    limit: 1
-                })
-                    .send()
-                    .then(function (response) {
-                        if (response && response.body && response.body.features && response.body.features.length) {
-                            console.log('geocode response: ');
-                            console.log(response);
-                            var sdFeature = response.body.features[0];
-
-                            new mapboxgl.Marker()
-                                .setLngLat(sdFeature.center)
-                                .addTo(map);
-                        }
-                    });
-            }
+    map.on('click', function (e) {
+        console.log(e);
+        var features = map.queryRenderedFeatures(e.point, {
+            layers: ['advantage-offices'] 
         });
+        console.log(features);
+
+        if (!features.length) {
+            return;
+        }
+
+        var feature = features[0];
+        var popup = new mapboxgl.Popup({ offset: [0, -15] })
+            .setLngLat(feature.geometry.coordinates)
+            .setHTML('<h3>' + feature.properties.title + '</h3><p>' + feature.properties.description + '</p><p>' + feature.properties.address + '</p>')
+            .addTo(map);
+    });
+    
 });
