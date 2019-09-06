@@ -1,6 +1,6 @@
 $(document).ready(function () {
     // List of Advantage offices
-    var geojson = {
+    var offices = {
         type: 'FeatureCollection',
         features: [
             {
@@ -10,10 +10,10 @@ $(document).ready(function () {
                     type: 'Point'                
                 },
                 properties: {
-                    address: '18100 Von Karman Avenue, Suite 1000, Irvine, CA 92612',
+                    address: '18100 Von Karman Avenue, Suite 1000',
                     code: 'I',
-                    description: 'Irvine Towers',
-                    title: 'Irvine office'
+                    city: 'Irvine, CA 92612',
+                    title: 'Irvine Towers'
                 }
             },
             {
@@ -23,9 +23,9 @@ $(document).ready(function () {
                     type: 'Point'
                 },
                 properties: {
-                    address: '9520 Towne Centre Drive, San Diego 92121',
+                    address: '9520 Towne Centre Drive',
                     code: 'SD',
-                    description: 'San Diego office',
+                    city: 'San Diego 92121',
                     title: 'San Diego office'
                 }
             }
@@ -35,26 +35,28 @@ $(document).ready(function () {
     mapboxgl.accessToken = 'pk.eyJ1Ijoia2RzbnlkZXJkZXYiLCJhIjoiY2swNnZ4ODB6MDEyZjNscGFuYXhnbzVrYyJ9.Yy8MxX3sxuGu0NVwxeFEJA';
     var map = new mapboxgl.Map({
         container: 'map',
-        boxZoom: true,
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/kdsnyderdev/ck08foh1q14mu1cnv84lem9cu',
         center: [-97.6114, 38.8403], // center on Salinas, Kansas
-        zoom: 4.5
+        zoom: 4.25
     });
     map.addControl(new mapboxgl.NavigationControl());
 
-    // add markers to map
-    geojson.features.forEach(function (marker) {
-
-        // create a HTML element for each feature
-        var el = document.createElement('div');
-        el.className = 'marker';
-
-        // make a marker for each feature and add to the map
-        new mapboxgl.Marker(el)
-            .setLngLat(marker.geometry.coordinates)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-                .setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p><p>' + marker.properties.address + '</p>'))
-            .addTo(map);
+    // add layer with marked office locations to map
+    map.on('load', function (e) {
+        // Add the data to your map as a layer
+        map.addLayer({
+            id: 'locations',
+            type: 'symbol',
+            // Add a GeoJSON source containing place coordinates and information.
+            source: {
+                type: 'geojson',
+                data: offices
+            },
+            layout: {
+                'icon-image': 'marker-editor',
+                'icon-allow-overlap': true,
+            }
+        });
     });
 
 });

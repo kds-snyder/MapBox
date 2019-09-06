@@ -6,13 +6,16 @@ html {
 body {
     margin: 0;
     padding: 0;
+    -webkit-font-smoothing: antialiased;
 }
 
 #map {
+    border: 1px solid #e7e7e7;
     bottom: 0;
+    left: 33.3333%;
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 66.6667%;
 }
 
 .mapboxgl-popup {
@@ -24,6 +27,10 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+.map-sidebar {
+    width: 33.3333%;
+}
+
 .marker {
     background-image: url('../images/mapbox-icon.png');
     background-size: cover;
@@ -31,4 +38,11 @@ body {
     height: 3.125rem; /* 50px */
     border-radius: 50%;
     cursor: pointer;
+}
+
+.pad2 {
+    padding: 1.25rem; /* 20px */
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
